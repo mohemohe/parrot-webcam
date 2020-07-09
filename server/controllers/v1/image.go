@@ -11,5 +11,5 @@ func GetImage(c echo.Context) error {
 	if len(f) == 0 {
 		return c.NoContent(http.StatusNoContent)
 	}
-	return c.Blob(http.StatusOK, "application/octet-stream", f)
+	return c.Blob(http.StatusOK, "image/jpeg", f)
 }
