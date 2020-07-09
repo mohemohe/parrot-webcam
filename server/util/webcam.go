@@ -115,7 +115,7 @@ func byteToJpeg(b []byte, width int, height int) []byte {
 	}
 
 	buf := &bytes.Buffer{}
-	if err := jpeg.Encode(buf, yuyv, nil); err != nil {
+	if err := jpeg.Encode(buf, yuyv, &jpeg.EncoderOptions{Quality: 96}); err != nil {
 		log.Error(err)
 		return []byte{}
 	}
