@@ -5,8 +5,8 @@ import (
 	"context"
 	"github.com/blackjack/webcam"
 	"github.com/labstack/gommon/log"
+	"github.com/pixiv/go-libjpeg/jpeg"
 	"image"
-	"image/jpeg"
 	"os"
 	"sort"
 	"time"
@@ -113,10 +113,9 @@ func byteToJpeg(b []byte, width int, height int) []byte {
 		yuyv.Cb[i] = b[ii+1]
 		yuyv.Cr[i] = b[ii+3]
 	}
-	img := yuyv
 
 	buf := &bytes.Buffer{}
-	if err := jpeg.Encode(buf, img, nil); err != nil {
+	if err := jpeg.Encode(buf, yuyv, nil); err != nil {
 		log.Error(err)
 		return []byte{}
 	}
