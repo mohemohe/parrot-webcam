@@ -15,6 +15,7 @@ func main() {
 	e.Use(middleware.Logger())
 
 	e.GET("/api/v1/image", v1.GetImage)
+	e.GET("/api/v1/image/taken", v1.GetImageTaken)
 
 	e.Logger.Fatal(e.Start(":1323"))
 

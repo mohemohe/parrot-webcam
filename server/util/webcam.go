@@ -9,6 +9,7 @@ import (
 	"image/jpeg"
 	"os"
 	"sort"
+	"time"
 )
 
 type FrameSizes []webcam.FrameSize
@@ -31,6 +32,7 @@ const V4L2_PIX_FMT_YUYV = 0x56595559
 
 var c *context.Context
 var b []byte
+var t time.Time
 
 func StartWebcam() bool {
 	if c != nil {
@@ -78,6 +80,7 @@ func loopWebcam() {
 			if len(f) == 0 {
 				log.Error("frame bytes: 0")
 			} else {
+				t = time.Now()
 				b = byteToJpeg(f, w, h)
 			}
 			break
@@ -121,4 +124,8 @@ func GetWebcamFrame() []byte {
 		return []byte{}
 	}
 	return b
+}
+
+func GetTime() time.Time {
+	return t
 }
