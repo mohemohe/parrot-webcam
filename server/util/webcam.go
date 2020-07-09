@@ -33,22 +33,26 @@ func StopWebcam() bool {
 }
 
 func loopWebcam() {
-	cam, err := webcam.Open(os.Getenv("WEBCAM"))
+	cam, err := webcam.Open(os.Getenv("DEVICE"))
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer cam.Close()
 
+	cam.StartStreaming()
+	defer cam.StopStreaming()
+
 	for {
+		_ = cam.WaitForFrame(5)
+
 		select {
 		case <- (*c).Done():
 			break
 		case <- time.After(5 * time.Second):
-			f, i, err := cam.GetFrame()
+			f, err := cam.ReadFrame()
 			if err != nil {
 				log.Error(err)
 			}
-			defer cam.ReleaseFrame(i)
 			if len(f) == 0 {
 				log.Error("frame bytes: 0")
 			} else {
