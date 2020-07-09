@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/blackjack/webcam"
 	"github.com/labstack/gommon/log"
+	"os"
 	"time"
 )
 
@@ -32,7 +33,7 @@ func StopWebcam() bool {
 }
 
 func loopWebcam() {
-	cam, err := webcam.Open("/dev/video0")
+	cam, err := webcam.Open(os.Getenv("WEBCAM"))
 	if err != nil {
 		log.Fatal(err)
 	}
