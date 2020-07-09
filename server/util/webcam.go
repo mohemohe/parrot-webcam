@@ -9,7 +9,6 @@ import (
 	"image/jpeg"
 	"os"
 	"sort"
-	"time"
 )
 
 type FrameSizes []webcam.FrameSize
@@ -67,12 +66,11 @@ func loopWebcam() {
 	defer cam.StopStreaming()
 
 	for {
-		_ = cam.WaitForFrame(5)
-
 		select {
 		case <- (*c).Done():
 			break
-		case <- time.After(5 * time.Second):
+		default:
+			_ = cam.WaitForFrame(5)
 			f, err := cam.ReadFrame()
 			if err != nil {
 				log.Error(err)
