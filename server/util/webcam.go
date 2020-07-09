@@ -80,8 +80,10 @@ func loopWebcam() {
 			if len(f) == 0 {
 				log.Error("frame bytes: 0")
 			} else {
-				t = time.Now()
-				b = byteToJpeg(f, w, h)
+				go func() {
+					t = time.Now()
+					b = byteToJpeg(f, w, h)
+				}()
 			}
 			break
 		}
