@@ -1,12 +1,34 @@
 package util
 
 import (
+	"bytes"
 	"context"
 	"github.com/blackjack/webcam"
 	"github.com/labstack/gommon/log"
+	"image"
+	"image/jpeg"
 	"os"
+	"sort"
 	"time"
 )
+
+type FrameSizes []webcam.FrameSize
+
+func (slice FrameSizes) Len() int {
+	return len(slice)
+}
+
+func (slice FrameSizes) Less(i, j int) bool {
+	ls := slice[i].MaxWidth * slice[i].MaxHeight
+	rs := slice[j].MaxWidth * slice[j].MaxHeight
+	return ls < rs
+}
+
+func (slice FrameSizes) Swap(i, j int) {
+	slice[i], slice[j] = slice[j], slice[i]
+}
+
+const V4L2_PIX_FMT_YUYV = 0x56595559
 
 var c *context.Context
 var b []byte
@@ -39,6 +61,8 @@ func loopWebcam() {
 	}
 	defer cam.Close()
 
+	w, h := setFrameSize(cam)
+
 	cam.StartStreaming()
 	defer cam.StopStreaming()
 
@@ -56,11 +80,42 @@ func loopWebcam() {
 			if len(f) == 0 {
 				log.Error("frame bytes: 0")
 			} else {
-				b = f
+				b = byteToJpeg(f, w, h)
 			}
 			break
 		}
 	}
+}
+
+func setFrameSize(cam *webcam.Webcam) (width int, height int) {
+	frames := FrameSizes(cam.GetSupportedFrameSizes(V4L2_PIX_FMT_YUYV))
+	sort.Sort(frames)
+	s := &frames[len(frames)-1]
+	width = int(s.MaxWidth)
+	height = int(s.MaxHeight)
+	if _, _, _, err := cam.SetImageFormat(V4L2_PIX_FMT_YUYV, s.MaxWidth, s.MaxWidth); err != nil {
+		log.Fatal(err)
+	}
+	return
+}
+
+func byteToJpeg(b []byte, width int, height int) []byte {
+	yuyv := image.NewYCbCr(image.Rect(0, 0, width, height), image.YCbCrSubsampleRatio422)
+	for i := range yuyv.Cb {
+		ii := i * 4
+		yuyv.Y[i*2] = b[ii]
+		yuyv.Y[i*2+1] = b[ii+2]
+		yuyv.Cb[i] = b[ii+1]
+		yuyv.Cr[i] = b[ii+3]
+	}
+	img := yuyv
+
+	buf := &bytes.Buffer{}
+	if err := jpeg.Encode(buf, img, nil); err != nil {
+		log.Error(err)
+		return []byte{}
+	}
+	return buf.Bytes()
 }
 
 func GetWebcamFrame() []byte {
