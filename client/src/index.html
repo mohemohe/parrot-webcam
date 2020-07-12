@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>parrot-webcam</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.less">
+</head>
+
+<body>
+    <div id="app">
+        <div id="loading-root">
+            <svg id="loading" width="400" height="400" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="200" cy="200" r="150">
+            </svg>
+        </div>
+        <style>
+            #loading-root {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            #loading {
+                fill: transparent;
+                stroke: #98a4c1;
+                stroke-width: 28px;
+                animation: dash 2s ease infinite, rotate 6s linear infinite;
+            }
+
+            @keyframes dash {
+                0% {
+                    stroke-dasharray: 10, 950;
+                    stroke-dashoffset: 0;
+                }
+
+                50% {
+                    stroke-dasharray: 850, 950;
+                    stroke-dashoffset: -250;
+                }
+
+                100% {
+                    stroke-dasharray: 850, 950;
+                    stroke-dashoffset: -930;
+                }
+            }
+
+            @keyframes rotate {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
+    </div>
+
+    <script src="index.tsx" defer></script>
+</body>
+
+</html>
