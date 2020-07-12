@@ -25,6 +25,10 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())
+	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+		Root:  "./assets",
+		HTML5: true,
+	}))
 
 	e.GET("/api/v1/auth", v1.AuthStatus, middlewares.Authorize, middlewares.Authorized)
 	e.POST("/api/v1/auth", v1.Auth)

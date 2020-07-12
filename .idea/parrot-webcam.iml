@@ -4,6 +4,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/client/.cache" />
       <excludeFolder url="file://$MODULE_DIR$/client/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/server/assets" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

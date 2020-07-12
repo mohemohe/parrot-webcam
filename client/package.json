@@ -41,9 +41,9 @@
     "typescript": "^3.8.3"
   },
   "scripts": {
-    "build": "NODE_ENV=production parcel build src/index.html",
+    "build": "NODE_ENV=production parcel build src/index.html --out-dir ../server/assets",
     "watch": "NODE_ENV=development API_BASE=http://localhost:1323 parcel serve src/index.html",
-    "clean": "rm -rf .cache dist",
+    "clean": "rm -rf .cache dist ../server/assets; mkdir -p ../server/assets; touch ../server/assets/.gitkeep",
     "lint": "eslint --ext .tsx,.ts src"
   }
 }
