@@ -4,12 +4,15 @@ import (
 	"bytes"
 	"context"
 	"github.com/blackjack/webcam"
+	"github.com/disintegration/imaging"
 	"github.com/labstack/gommon/log"
 	"github.com/pixiv/go-libjpeg/jpeg"
 	"image"
+	"image/color"
 	"image/draw"
 	"os"
 	"sort"
+	"strconv"
 	"time"
 )
 
@@ -123,8 +126,16 @@ func byteToJpeg(b []byte, width int, height int) []byte {
 		yuyv.Cr[i] = b[ii+3]
 	}
 
-	rgba := image.NewRGBA(rect)
+	rgba := image.NewNRGBA(rect)
 	draw.Draw(rgba, rgba.Bounds(), yuyv, yuyv.Bounds().Min, draw.Src)
+
+	rotateStr := os.Getenv("ROTATE")
+	if rotateStr != "" {
+		deg, err := strconv.ParseFloat(rotateStr, 64)
+		if err == nil {
+			rgba = imaging.Rotate(rgba, deg, color.Transparent)
+		}
+	}
 
 	buf := &bytes.Buffer{}
 	if err := jpeg.Encode(buf, rgba, &jpeg.EncoderOptions{Quality: 96}); err != nil {
