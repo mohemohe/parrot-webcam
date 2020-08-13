@@ -126,14 +126,15 @@ func byteToJpeg(b []byte, width int, height int) []byte {
 		yuyv.Cr[i] = b[ii+3]
 	}
 
-	rgba := image.NewNRGBA(rect)
+	rgba := image.NewRGBA(rect)
 	draw.Draw(rgba, rgba.Bounds(), yuyv, yuyv.Bounds().Min, draw.Src)
 
 	rotateStr := os.Getenv("ROTATE")
 	if rotateStr != "" {
 		deg, err := strconv.ParseFloat(rotateStr, 64)
 		if err == nil {
-			rgba = imaging.Rotate(rgba, deg, color.Transparent)
+			nrgba := imaging.Rotate(rgba, deg, color.Transparent)
+			draw.Draw(rgba, rgba.Bounds(), nrgba, nrgba.Bounds().Min, draw.Src)
 		}
 	}
 
