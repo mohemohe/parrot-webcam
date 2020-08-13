@@ -36,7 +36,8 @@ var t time.Time
 
 func StartWebcam() bool {
 	if c != nil {
-		return false
+		StopWebcam()
+		time.Sleep(10 * time.Second)
 	}
 	b, fn := context.WithCancel(context.Background())
 	b = context.WithValue(b, "cancel", fn)
