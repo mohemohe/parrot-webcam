@@ -36,7 +36,9 @@ var t time.Time
 
 func StartWebcam() bool {
 	if c != nil {
+		log.Print("webcam already started.")
 		StopWebcam()
+		log.Print("send stop signal. wait to 10sec.")
 		time.Sleep(10 * time.Second)
 	}
 	b, fn := context.WithCancel(context.Background())
@@ -58,11 +60,13 @@ func StopWebcam() bool {
 
 func loopWebcam() {
 	device := os.Getenv("DEVICE")
+	log.Print("webcam open:", device)
+
 	cam, err := webcam.Open(device)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Print("webcam open:", device)
+	log.Print("webcam open success:", device)
 	defer cam.Close()
 
 	w, h := setFrameSize(cam)
