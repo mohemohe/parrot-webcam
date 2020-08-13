@@ -124,7 +124,7 @@ func byteToJpeg(b []byte, width int, height int) []byte {
 	}
 
 	rgba := image.NewRGBA(rect)
-	draw.Draw(rgba, yuyv.Bounds(), yuyv, yuyv.Bounds().Min, draw.Src)
+	draw.Draw(rgba, rgba.Bounds(), yuyv, yuyv.Bounds().Min, draw.Src)
 
 	buf := &bytes.Buffer{}
 	if err := jpeg.Encode(buf, rgba, &jpeg.EncoderOptions{Quality: 96}); err != nil {
