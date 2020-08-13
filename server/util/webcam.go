@@ -134,7 +134,7 @@ func byteToJpeg(b []byte, width int, height int) []byte {
 		deg, err := strconv.ParseFloat(rotateStr, 64)
 		if err == nil {
 			nrgba := imaging.Rotate(rgba, deg, color.Transparent)
-			draw.Draw(rgba, rgba.Bounds(), nrgba, nrgba.Bounds().Min, draw.Src)
+			draw.Draw(rgba, nrgba.Bounds(), nrgba, nrgba.Bounds().Min, draw.Src)
 		}
 	}
 
