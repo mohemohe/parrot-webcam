@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/gommon/log"
 	"github.com/pixiv/go-libjpeg/jpeg"
 	"image"
+	"image/draw"
 	"os"
 	"sort"
 	"time"
@@ -112,7 +113,8 @@ func setFrameSize(cam *webcam.Webcam) (width int, height int) {
 }
 
 func byteToJpeg(b []byte, width int, height int) []byte {
-	yuyv := image.NewYCbCr(image.Rect(0, 0, width, height), image.YCbCrSubsampleRatio422)
+	rect := image.Rect(0, 0, width, height)
+	yuyv := image.NewYCbCr(rect, image.YCbCrSubsampleRatio422)
 	for i := range yuyv.Cb {
 		ii := i * 4
 		yuyv.Y[i*2] = b[ii]
@@ -121,8 +123,11 @@ func byteToJpeg(b []byte, width int, height int) []byte {
 		yuyv.Cr[i] = b[ii+3]
 	}
 
+	rgba := image.NewRGBA(rect)
+	draw.Draw(rgba, yuyv.Bounds(), yuyv, yuyv.Bounds().Min, draw.Src)
+
 	buf := &bytes.Buffer{}
-	if err := jpeg.Encode(buf, yuyv, &jpeg.EncoderOptions{Quality: 96}); err != nil {
+	if err := jpeg.Encode(buf, rgba, &jpeg.EncoderOptions{Quality: 96}); err != nil {
 		log.Error(err)
 		return []byte{}
 	}
