@@ -9,7 +9,6 @@ import (
 	"github.com/pixiv/go-libjpeg/jpeg"
 	"image"
 	"image/color"
-	"image/draw"
 	"os"
 	"sort"
 	"strconv"
@@ -118,14 +117,12 @@ func byteToJpeg(b []byte, width int, height int) []byte {
 		yuyv.Cb[i] = b[ii+1]
 		yuyv.Cr[i] = b[ii+3]
 	}
-	rgba := image.NewNRGBA(r)
-	draw.Draw(rgba, rgba.Bounds(), yuyv, yuyv.Bounds().Min, draw.Src)
-
+	rgba := imaging.Clone(yuyv)
 	rotateStr := os.Getenv("ROTATE")
 	if rotateStr != "" {
 		deg, err := strconv.ParseFloat(rotateStr, 64)
 		if err == nil {
-			rgba = imaging.Rotate(rgba, deg, color.Transparent)
+			rgba = imaging.Rotate(yuyv, deg, color.Transparent)
 		}
 	}
 
