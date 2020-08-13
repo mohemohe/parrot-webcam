@@ -56,10 +56,12 @@ func StopWebcam() bool {
 }
 
 func loopWebcam() {
-	cam, err := webcam.Open(os.Getenv("DEVICE"))
+	device := os.Getenv("DEVICE")
+	cam, err := webcam.Open(device)
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Print("webcam open:", device)
 	defer cam.Close()
 
 	w, h := setFrameSize(cam)
