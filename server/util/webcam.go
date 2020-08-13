@@ -4,11 +4,15 @@ import (
 	"bytes"
 	"context"
 	"github.com/blackjack/webcam"
+	"github.com/disintegration/imaging"
 	"github.com/labstack/gommon/log"
 	"github.com/pixiv/go-libjpeg/jpeg"
 	"image"
+	"image/color"
+	"image/draw"
 	"os"
 	"sort"
+	"strconv"
 	"time"
 )
 
@@ -105,7 +109,8 @@ func setFrameSize(cam *webcam.Webcam) (width int, height int) {
 }
 
 func byteToJpeg(b []byte, width int, height int) []byte {
-	yuyv := image.NewYCbCr(image.Rect(0, 0, width, height), image.YCbCrSubsampleRatio422)
+	r := image.Rect(0, 0, width, height)
+	yuyv := image.NewYCbCr(r, image.YCbCrSubsampleRatio422)
 	for i := range yuyv.Cb {
 		ii := i * 4
 		yuyv.Y[i*2] = b[ii]
@@ -113,9 +118,19 @@ func byteToJpeg(b []byte, width int, height int) []byte {
 		yuyv.Cb[i] = b[ii+1]
 		yuyv.Cr[i] = b[ii+3]
 	}
+	rgba := image.NewNRGBA(r)
+	draw.Draw(rgba, rgba.Bounds(), yuyv, yuyv.Bounds().Min, draw.Src)
+
+	rotateStr := os.Getenv("ROTATE")
+	if rotateStr != "" {
+		deg, err := strconv.ParseFloat(rotateStr, 64)
+		if err == nil {
+			rgba = imaging.Rotate(rgba, deg, color.Transparent)
+		}
+	}
 
 	buf := &bytes.Buffer{}
-	if err := jpeg.Encode(buf, yuyv, &jpeg.EncoderOptions{Quality: 96}); err != nil {
+	if err := jpeg.Encode(buf, rgba, &jpeg.EncoderOptions{Quality: 96}); err != nil {
 		log.Error(err)
 		return []byte{}
 	}

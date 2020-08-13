@@ -6,12 +6,11 @@ import (
 	v1 "github.com/mohemohe/parrot-webcam/server/controllers/v1"
 	"github.com/mohemohe/parrot-webcam/server/middlewares"
 	"github.com/mohemohe/parrot-webcam/server/models"
-	"github.com/mohemohe/parrot-webcam/server/util"
 	"os"
 )
 
 func main() {
-	util.StartWebcam()
+	//util.StartWebcam()
 
 	rootID := os.Getenv("ROOT_ID")
 	rootPassword := os.Getenv("ROOT_PASSWORD")
@@ -26,7 +25,7 @@ func main() {
 	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())
 	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
-		Root:  "./assets",
+		Root:  "./assets/",
 		HTML5: true,
 	}))
 
