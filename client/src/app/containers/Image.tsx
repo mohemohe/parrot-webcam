@@ -42,7 +42,7 @@ export default class Image extends React.Component<Props, {}> {
         }
 
         return (
-            <div>
+            <div id={"image_wrapper"}>
                 <img src={this.props.ImageStore?.buffer} />
             </div>
         );
